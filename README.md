@@ -1,3 +1,4 @@
+
 # Campus Placement Management System
 
 A comprehensive web-based platform designed to streamline campus placement activities, enabling students, recruiters, and placement officers to interact effectively.
@@ -211,6 +212,3 @@ python manage.py runserver 8080
 
 For issues and queries, refer to the Django documentation at https://docs.djangoproject.com/
 
-## License
-
-This project is for educational purposes.
