@@ -1,0 +1,65 @@
+{% extends 'placement/base.html' %}
+
+{% block title %}Apply for {{ job.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg mt-4 mb-5">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="bi bi-send me-2"></i>
+                        Apply for Job
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-info">
+                        <h5><i class="bi bi-briefcase me-2"></i>{{ job.title }}</h5>
+                        <p class="mb-1"><i class="bi bi-building me-1"></i> {{ job.company.name }}</p>
+                        <p class="mb-0"><i class="bi bi-geo-alt me-1"></i> {{ job.location }}</p>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="cover_letter" class="form-label">
+                                Cover Letter (Optional)
+                            </label>
+                            <textarea name="cover_letter" id="cover_letter" 
+                                      class="form-control" rows="6"
+                                      placeholder="Write a brief cover letter explaining why you're a good fit for this role..."></textarea>
+                            <small class="form-text text-muted">
+                                This will be visible to the recruiter along with your profile.
+                            </small>
+                        </div>
+
+                        <div class="alert alert-warning">
+                            <h6><i class="bi bi-info-circle-fill me-2"></i>Before You Apply</h6>
+                            <ul class="mb-0">
+                                <li>Make sure your profile is complete and up-to-date</li>
+                                <li>Ensure you have uploaded your latest resume</li>
+                                <li>You cannot withdraw your application after the deadline</li>
+                                <li>You'll be notified about application status via email</li>
+                            </ul>
+                        </div>
+
+                        <div class="d-flex gap-3">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-check-circle me-2"></i>
+                                Submit Application
+                            </button>
+                            <a href="{% url 'placement:job_detail' job.id %}" 
+                               class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-x-circle me-2"></i>
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

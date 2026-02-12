@@ -1,0 +1,85 @@
+{% extends 'placement/base.html' %}
+
+{% block title %}Login - Campus Placement System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg mt-5">
+                <div class="card-header text-center">
+                    <h4 class="mb-0">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>
+                        Login to Your Account
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">
+                                <i class="bi bi-person me-1"></i>Username
+                            </label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.username.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_password" class="form-label">
+                                <i class="bi bi-lock me-1"></i>Password
+                            </label>
+                            {{ form.password }}
+                            {% if form.password.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.password.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>
+                                Login
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center bg-light">
+                    <small>
+                        Don't have an account? 
+                        <a href="{% url 'placement:register' %}" class="text-decoration-none">
+                            Register here
+                        </a>
+                    </small>
+                </div>
+            </div>
+            
+            <!-- Quick Access Info -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h6 class="card-title text-center mb-3">Quick Access</h6>
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <i class="bi bi-person-badge text-primary" style="font-size: 2rem;"></i>
+                            <p class="small mb-0 mt-2">Students</p>
+                        </div>
+                        <div class="col-4">
+                            <i class="bi bi-building text-success" style="font-size: 2rem;"></i>
+                            <p class="small mb-0 mt-2">Recruiters</p>
+                        </div>
+                        <div class="col-4">
+                            <i class="bi bi-shield-check text-warning" style="font-size: 2rem;"></i>
+                            <p class="small mb-0 mt-2">Admin</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

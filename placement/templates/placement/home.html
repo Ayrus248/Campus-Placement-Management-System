@@ -1,0 +1,183 @@
+{% extends 'placement/base.html' %}
+
+{% block title %}Home - Campus Placement System{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="bg-primary text-white py-5 mb-4">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-3">
+                    <i class="bi bi-mortarboard-fill me-3"></i>
+                    Campus Placement Management System
+                </h1>
+                <p class="lead mb-4">
+                    Connecting talented students with top companies. Streamline your placement process with our comprehensive platform.
+                </p>
+                {% if not user.is_authenticated %}
+                    <div class="d-flex gap-3">
+                        <a href="{% url 'placement:register' %}" class="btn btn-light btn-lg">
+                            <i class="bi bi-person-plus me-2"></i>Get Started
+                        </a>
+                        <a href="{% url 'placement:login' %}" class="btn btn-outline-light btn-lg">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="col-lg-4 text-center d-none d-lg-block">
+                <i class="bi bi-building" style="font-size: 10rem; opacity: 0.2;"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Section -->
+<div class="container mb-5">
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="card stat-card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-people-fill stat-icon text-primary"></i>
+                    <h3 class="mt-3 mb-1">{{ total_students }}</h3>
+                    <p class="text-muted mb-0">Students Registered</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-building stat-icon text-success"></i>
+                    <h3 class="mt-3 mb-1">{{ total_companies }}</h3>
+                    <p class="text-muted mb-0">Partner Companies</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-briefcase-fill stat-icon text-warning"></i>
+                    <h3 class="mt-3 mb-1">{{ total_jobs }}</h3>
+                    <p class="text-muted mb-0">Active Jobs</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-trophy-fill stat-icon text-danger"></i>
+                    <h3 class="mt-3 mb-1">{{ placed_students }}</h3>
+                    <p class="text-muted mb-0">Students Placed</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="container mb-5">
+    <h2 class="text-center mb-5">Why Choose Our Platform?</h2>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <i class="bi bi-speedometer2 text-primary" style="font-size: 3rem;"></i>
+                    <h5 class="card-title mt-3">Easy to Use</h5>
+                    <p class="card-text">
+                        Intuitive interface designed for students, recruiters, and placement officers.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <i class="bi bi-shield-check text-success" style="font-size: 3rem;"></i>
+                    <h5 class="card-title mt-3">Smart Filtering</h5>
+                    <p class="card-text">
+                        Automatic eligibility checking based on CGPA, backlogs, and branch criteria.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <i class="bi bi-graph-up-arrow text-warning" style="font-size: 3rem;"></i>
+                    <h5 class="card-title mt-3">Analytics</h5>
+                    <p class="card-text">
+                        Comprehensive statistics and reports for tracking placement performance.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- For Students Section -->
+<div class="container mb-5">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <h3 class="mb-3"><i class="bi bi-person-badge me-2 text-primary"></i>For Students</h3>
+            <ul class="list-unstyled">
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Create detailed profile with academic information</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Upload and manage resume</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Browse jobs filtered by eligibility</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Apply to multiple companies</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Track application status</li>
+            </ul>
+            {% if not user.is_authenticated %}
+                <a href="{% url 'placement:register' %}" class="btn btn-primary">
+                    <i class="bi bi-person-plus me-2"></i>Register as Student
+                </a>
+            {% endif %}
+        </div>
+        <div class="col-md-6 text-center">
+            <i class="bi bi-person-workspace" style="font-size: 8rem; color: #3498db; opacity: 0.8;"></i>
+        </div>
+    </div>
+</div>
+
+<hr class="my-5">
+
+<!-- For Recruiters Section -->
+<div class="container mb-5">
+    <div class="row align-items-center">
+        <div class="col-md-6 text-center order-md-2">
+            <i class="bi bi-building" style="font-size: 8rem; color: #27ae60; opacity: 0.8;"></i>
+        </div>
+        <div class="col-md-6 order-md-1">
+            <h3 class="mb-3"><i class="bi bi-building me-2 text-success"></i>For Recruiters</h3>
+            <ul class="list-unstyled">
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Register company profile</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Post job opportunities with eligibility criteria</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>View filtered student applications</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Access student profiles and resumes</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Manage recruitment process efficiently</li>
+            </ul>
+            {% if not user.is_authenticated %}
+                <a href="{% url 'placement:register' %}" class="btn btn-success">
+                    <i class="bi bi-briefcase me-2"></i>Register as Recruiter
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Call to Action -->
+{% if not user.is_authenticated %}
+<div class="bg-light py-5 mt-5">
+    <div class="container text-center">
+        <h2 class="mb-4">Ready to Get Started?</h2>
+        <p class="lead mb-4">Join hundreds of students and companies already using our platform</p>
+        <a href="{% url 'placement:register' %}" class="btn btn-primary btn-lg me-3">
+            <i class="bi bi-person-plus me-2"></i>Create Account
+        </a>
+        <a href="{% url 'placement:login' %}" class="btn btn-outline-primary btn-lg">
+            <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+        </a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

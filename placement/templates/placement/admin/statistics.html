@@ -1,0 +1,160 @@
+{% extends 'placement/base.html' %}
+
+{% block title %}Placement Statistics{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="bi bi-graph-up me-2"></i>
+            Placement Statistics & Analytics
+        </h2>
+        <a href="{% url 'placement:admin_dashboard' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Overall Statistics -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Overall Placement Rate</h5>
+                </div>
+                <div class="card-body text-center">
+                    <h1 class="display-3 text-success">
+                        {{ placed_students|floatformat:0 }}/{{ total_students }}
+                    </h1>
+                    <p class="text-muted">Students Placed</p>
+                    {% if total_students > 0 %}
+                        <div class="progress" style="height: 30px;">
+                            <div class="progress-bar bg-success" style="width: {{ placed_students|floatformat:0|add:'0' }}{{ total_students|floatformat:0|divisibleby:placed_students|floatformat:0 }}%">
+                                {% widthratio placed_students total_students 100 %}%
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">CGPA Distribution</h5>
+                </div>
+                <div class="card-body">
+                    {% for range, count in cgpa_ranges %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <small><strong>{{ range }}</strong></small>
+                            <small>{{ count }} students</small>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: {% if total_students > 0 %}{% widthratio count total_students 100 %}{% else %}0{% endif %}%"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Branch-wise Statistics -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="bi bi-diagram-3 me-2"></i>
+                Branch-wise Placement Statistics
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Branch</th>
+                            <th class="text-center">Total Students</th>
+                            <th class="text-center">Placed</th>
+                            <th class="text-center">Placement %</th>
+                            <th class="text-center">Avg CGPA</th>
+                            <th class="text-center">Avg Package (LPA)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stat in branch_stats %}
+                        <tr>
+                            <td><strong>{{ stat.branch }}</strong></td>
+                            <td class="text-center">{{ stat.total_students }}</td>
+                            <td class="text-center">
+                                <span class="badge bg-success">{{ stat.placed_students }}</span>
+                            </td>
+                            <td class="text-center">
+                                {% if stat.total_students > 0 %}
+                                    {% widthratio stat.placed_students stat.total_students 100 %}%
+                                {% else %}
+                                    0%
+                                {% endif %}
+                            </td>
+                            <td class="text-center">{{ stat.avg_cgpa|floatformat:2|default:"N/A" }}</td>
+                            <td class="text-center">₹{{ stat.avg_package|floatformat:2|default:"N/A" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">No data available</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Companies -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="bi bi-trophy me-2"></i>
+                Top Companies by Placements
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Company</th>
+                            <th class="text-center">Students Hired</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for company in company_stats %}
+                        <tr>
+                            <td>
+                                {% if forloop.counter == 1 %}
+                                    <i class="bi bi-trophy-fill text-warning"></i>
+                                {% elif forloop.counter == 2 %}
+                                    <i class="bi bi-trophy-fill text-secondary"></i>
+                                {% elif forloop.counter == 3 %}
+                                    <i class="bi bi-trophy-fill" style="color: #CD7F32;"></i>
+                                {% else %}
+                                    {{ forloop.counter }}
+                                {% endif %}
+                            </td>
+                            <td><strong>{{ company.placement_company }}</strong></td>
+                            <td class="text-center">
+                                <span class="badge bg-primary">{{ company.count }}</span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center text-muted">No placements yet</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

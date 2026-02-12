@@ -1,0 +1,147 @@
+{% extends 'placement/base.html' %}
+
+{% block title %}My Applications{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="mb-3">
+                <i class="bi bi-file-earmark-text me-2"></i>
+                My Applications
+            </h2>
+
+            <!-- Filter by Status -->
+            <div class="card card-body">
+                <form method="get" class="row g-3 align-items-end">
+                    <div class="col-md-10">
+                        <label class="form-label">Filter by Status</label>
+                        <select name="status" class="form-select">
+                            <option value="">All Status</option>
+                            <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+                            <option value="shortlisted" {% if status_filter == 'shortlisted' %}selected{% endif %}>Shortlisted</option>
+                            <option value="accepted" {% if status_filter == 'accepted' %}selected{% endif %}>Accepted</option>
+                            <option value="rejected" {% if status_filter == 'rejected' %}selected{% endif %}>Rejected</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-funnel me-2"></i>Filter
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Applications List -->
+    {% if applications %}
+        <div class="row">
+            {% for application in applications %}
+            <div class="col-12 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h5 class="mb-2">
+                                    {{ application.job.title }}
+                                    {% if application.status == 'accepted' %}
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-check-circle me-1"></i>Accepted
+                                        </span>
+                                    {% elif application.status == 'shortlisted' %}
+                                        <span class="badge bg-info">
+                                            <i class="bi bi-star me-1"></i>Shortlisted
+                                        </span>
+                                    {% elif application.status == 'pending' %}
+                                        <span class="badge bg-warning">
+                                            <i class="bi bi-clock me-1"></i>Pending
+                                        </span>
+                                    {% elif application.status == 'rejected' %}
+                                        <span class="badge bg-danger">
+                                            <i class="bi bi-x-circle me-1"></i>Rejected
+                                        </span>
+                                    {% elif application.status == 'withdrawn' %}
+                                        <span class="badge bg-secondary">
+                                            <i class="bi bi-arrow-return-left me-1"></i>Withdrawn
+                                        </span>
+                                    {% endif %}
+                                </h5>
+                                <p class="text-muted mb-2">
+                                    <i class="bi bi-building me-1"></i>
+                                    {{ application.job.company.name }}
+                                </p>
+                                
+                                <div class="row g-2 mb-2">
+                                    <div class="col-md-4">
+                                        <small class="text-muted d-block">Applied On</small>
+                                        <strong>{{ application.applied_at|date:"d M, Y" }}</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <small class="text-muted d-block">Package</small>
+                                        <strong>{{ application.job.get_package_range }}</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <small class="text-muted d-block">Location</small>
+                                        <strong>{{ application.job.location }}</strong>
+                                    </div>
+                                </div>
+
+                                {% if application.cover_letter %}
+                                <div class="mt-3">
+                                    <small class="text-muted d-block mb-1">Your Cover Letter:</small>
+                                    <p class="mb-0 small border-start border-primary border-3 ps-3">
+                                        {{ application.cover_letter|truncatewords:50 }}
+                                    </p>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-4 d-flex flex-column justify-content-center align-items-end">
+                                <a href="{% url 'placement:job_detail' application.job.id %}" 
+                                   class="btn btn-outline-primary mb-2">
+                                    <i class="bi bi-eye me-2"></i>View Job
+                                </a>
+                                
+                                {% if application.status == 'accepted' %}
+                                    <div class="alert alert-success mb-0">
+                                        <i class="bi bi-trophy-fill me-1"></i>
+                                        Congratulations!
+                                    </div>
+                                {% elif application.status == 'shortlisted' %}
+                                    <div class="alert alert-info mb-0">
+                                        <i class="bi bi-star-fill me-1"></i>
+                                        Prepare for interview!
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-light text-muted small">
+                        Last updated: {{ application.updated_at|date:"d M, Y h:i A" }}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-inbox" style="font-size: 4rem; opacity: 0.3;"></i>
+                <h4 class="mt-3">No Applications Yet</h4>
+                <p class="text-muted">
+                    {% if status_filter %}
+                        No applications with status "{{ status_filter }}".
+                        <a href="{% url 'placement:my_applications' %}">View all applications</a>
+                    {% else %}
+                        You haven't applied to any jobs yet. Start browsing!
+                    {% endif %}
+                </p>
+                <a href="{% url 'placement:student_jobs' %}" class="btn btn-primary">
+                    <i class="bi bi-search me-2"></i>Browse Jobs
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

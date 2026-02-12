@@ -1,0 +1,160 @@
+{% extends 'placement/base.html' %}
+
+{% block title %}Manage Students{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="bi bi-people me-2"></i>
+            Manage Students
+        </h2>
+        <a href="{% url 'placement:admin_dashboard' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Filters -->
+    <div class="card card-body mb-4">
+        <form method="get">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Search</label>
+                    <input type="text" name="search" class="form-control" 
+                           placeholder="Name or enrollment..." value="{{ request.GET.search }}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Branch</label>
+                    <select name="branch" class="form-select">
+                        <option value="">All Branches</option>
+                        {% for code, name in branches %}
+                            <option value="{{ code }}" {% if request.GET.branch == code %}selected{% endif %}>
+                                {{ code }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Year</label>
+                    <select name="year" class="form-select">
+                        <option value="">All Years</option>
+                        {% for code, name in years %}
+                            <option value="{{ code }}" {% if request.GET.year == code %}selected{% endif %}>
+                                Year {{ name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Placement</label>
+                    <select name="placement" class="form-select">
+                        <option value="">All Students</option>
+                        <option value="placed" {% if request.GET.placement == 'placed' %}selected{% endif %}>Placed</option>
+                        <option value="not_placed" {% if request.GET.placement == 'not_placed' %}selected{% endif %}>Not Placed</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">&nbsp;</label>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-funnel me-2"></i>Apply Filters
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Students Table -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Enrollment No.</th>
+                            <th>Name</th>
+                            <th>Branch</th>
+                            <th>Year</th>
+                            <th class="text-center">CGPA</th>
+                            <th class="text-center">Backlogs</th>
+                            <th class="text-center">Resume</th>
+                            <th class="text-center">Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr>
+                            <td><strong>{{ student.enrollment_number }}</strong></td>
+                            <td>{{ student.user.get_full_name }}</td>
+                            <td>{{ student.get_branch_display }}</td>
+                            <td>{{ student.get_year_display }}</td>
+                            <td class="text-center">
+                                <span class="badge bg-{% if student.cgpa >= 8 %}success{% elif student.cgpa >= 7 %}info{% else %}secondary{% endif %}">
+                                    {{ student.cgpa }}
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-{% if student.backlogs == 0 %}success{% else %}danger{% endif %}">
+                                    {{ student.backlogs }}
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                {% if student.resume %}
+                                    <a href="{% url 'placement:download_student_resume' student.id %}" 
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-download"></i>
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                {% if student.is_placed %}
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-check-circle me-1"></i>Placed
+                                    </span>
+                                    <br>
+                                    <small class="text-muted">{{ student.placement_company }}</small>
+                                {% else %}
+                                    <span class="badge bg-warning">Not Placed</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="/admin/placement/studentprofile/{{ student.id }}/change/" 
+                                   class="btn btn-sm btn-outline-primary" target="_blank">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="9" class="text-center text-muted py-4">
+                                No students found matching your filters.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="card mt-4">
+        <div class="card-body">
+            <div class="row text-center">
+                <div class="col-md-3">
+                    <h4>{{ students.count }}</h4>
+                    <p class="text-muted mb-0">Total Students</p>
+                </div>
+                <div class="col-md-3">
+                    <h4>{{ students|length }}</h4>
+                    <p class="text-muted mb-0">Displayed</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

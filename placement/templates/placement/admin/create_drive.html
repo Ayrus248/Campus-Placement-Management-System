@@ -1,0 +1,94 @@
+{% extends 'placement/base.html' %}
+
+{% block title %}Create Placement Drive{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg mt-4 mb-5">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="bi bi-plus-circle me-2"></i>
+                        Create New Placement Drive
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="title" class="form-label">
+                                <i class="bi bi-bookmark me-1"></i>Drive Title *
+                            </label>
+                            <input type="text" name="title" id="title" class="form-control" 
+                                   placeholder="e.g., Winter Placements 2024" required>
+                            <small class="form-text text-muted">Give your placement drive a descriptive name</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">
+                                <i class="bi bi-file-text me-1"></i>Description *
+                            </label>
+                            <textarea name="description" id="description" class="form-control" rows="4" 
+                                      placeholder="Describe the placement drive, objectives, and key information..." required></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="start_date" class="form-label">
+                                    <i class="bi bi-calendar-event me-1"></i>Start Date *
+                                </label>
+                                <input type="date" name="start_date" id="start_date" class="form-control" required>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="end_date" class="form-label">
+                                    <i class="bi bi-calendar-check me-1"></i>End Date *
+                                </label>
+                                <input type="date" name="end_date" id="end_date" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                            <strong>Note:</strong> You can add participating companies after creating the drive through the admin panel.
+                        </div>
+
+                        <div class="d-flex gap-3 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-circle me-2"></i>
+                                Create Drive
+                            </button>
+                            <a href="{% url 'placement:manage_drives' %}" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-x-circle me-2"></i>
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tips Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-lightbulb me-2"></i>
+                        Tips for Organizing a Successful Drive
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0">
+                        <li>Plan the drive timeline well in advance</li>
+                        <li>Coordinate with companies for their availability</li>
+                        <li>Notify students about the drive schedule</li>
+                        <li>Prepare company-wise student lists based on eligibility</li>
+                        <li>Set clear deadlines for applications</li>
+                        <li>Keep track of each company's selection process</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

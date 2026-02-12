@@ -1,0 +1,5 @@
+Superuser
+
+username: admin
+email : ayrus.here.842@gmail.com
+pass : udayasurya

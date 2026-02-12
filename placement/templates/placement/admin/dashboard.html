@@ -1,0 +1,237 @@
+{% extends 'placement/base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="profile-header">
+    <div class="container">
+        <h2 class="mb-2">
+            <i class="bi bi-shield-check me-2"></i>
+            Admin Dashboard
+        </h2>
+        <p class="mb-0 opacity-75">Placement Management Overview</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Main Statistics -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card stat-card text-center h-100">
+                <div class="card-body">
+                    <i class="bi bi-people-fill stat-icon text-primary"></i>
+                    <h3 class="mt-3 mb-1">{{ total_students }}</h3>
+                    <p class="text-muted mb-2">Total Students</p>
+                    <a href="{% url 'placement:manage_students' %}" class="btn btn-sm btn-outline-primary">
+                        Manage <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card stat-card text-center h-100">
+                <div class="card-body">
+                    <i class="bi bi-building stat-icon text-success"></i>
+                    <h3 class="mt-3 mb-1">{{ total_companies }}</h3>
+                    <p class="text-muted mb-2">Total Companies</p>
+                    <small class="text-muted">{{ approved_companies }} approved</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card stat-card text-center h-100">
+                <div class="card-body">
+                    <i class="bi bi-briefcase-fill stat-icon text-warning"></i>
+                    <h3 class="mt-3 mb-1">{{ total_jobs }}</h3>
+                    <p class="text-muted mb-2">Total Jobs</p>
+                    <small class="text-muted">{{ active_jobs }} active</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card stat-card text-center h-100">
+                <div class="card-body">
+                    <i class="bi bi-trophy-fill stat-icon text-danger"></i>
+                    <h3 class="mt-3 mb-1">{{ placement_percentage }}%</h3>
+                    <p class="text-muted mb-2">Placement Rate</p>
+                    <small class="text-muted">{{ placed_students }}/{{ total_students }} placed</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Statistics -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card stat-card text-center h-100">
+                <div class="card-body">
+                    <i class="bi bi-file-earmark-text-fill stat-icon text-info"></i>
+                    <h3 class="mt-3 mb-1">{{ total_applications }}</h3>
+                    <p class="text-muted mb-0">Total Applications</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card stat-card text-center h-100">
+                <div class="card-body">
+                    <i class="bi bi-hourglass-split stat-icon text-warning"></i>
+                    <h3 class="mt-3 mb-1">{{ pending_applications }}</h3>
+                    <p class="text-muted mb-0">Pending Applications</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card stat-card text-center h-100">
+                <div class="card-body">
+                    <i class="bi bi-building-check stat-icon text-warning"></i>
+                    <h3 class="mt-3 mb-1">{{ pending_companies.count }}</h3>
+                    <p class="text-muted mb-0">Pending Approvals</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Branch-wise Statistics -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-bar-chart me-2"></i>
+                        Branch-wise Statistics
+                    </h5>
+                    <a href="{% url 'placement:statistics' %}" class="btn btn-sm btn-primary">
+                        View Detailed Stats
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Branch</th>
+                                    <th class="text-center">Total</th>
+                                    <th class="text-center">Placed</th>
+                                    <th class="text-center">Avg CGPA</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for stat in branch_stats %}
+                                <tr>
+                                    <td><strong>{{ stat.branch }}</strong></td>
+                                    <td class="text-center">{{ stat.total }}</td>
+                                    <td class="text-center">
+                                        <span class="badge bg-success">{{ stat.placed }}</span>
+                                    </td>
+                                    <td class="text-center">{{ stat.avg_cgpa|floatformat:2 }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-clock-history me-2"></i>
+                        Recent Applications
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_applications %}
+                        <div class="list-group list-group-flush">
+                            {% for app in recent_applications %}
+                            <div class="list-group-item px-0">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="mb-1 small">{{ app.student.user.get_full_name }}</h6>
+                                        <p class="text-muted mb-1 small">
+                                            {{ app.job.title }} at {{ app.job.company.name }}
+                                        </p>
+                                        <small class="text-muted">{{ app.applied_at|date:"d M, Y" }}</small>
+                                    </div>
+                                    <span class="badge bg-{{ app.status|yesno:'success,warning,danger' }}">
+                                        {{ app.get_status_display }}
+                                    </span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center">No recent applications</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Pending Company Approvals -->
+            {% if pending_companies %}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Pending Company Approvals
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% for company in pending_companies %}
+                    <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                        <div>
+                            <strong>{{ company.name }}</strong>
+                            <p class="text-muted mb-0 small">{{ company.industry }}</p>
+                        </div>
+                        <a href="{% url 'placement:manage_companies' %}" class="btn btn-sm btn-warning">
+                            Review
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="bi bi-lightning-fill me-2"></i>
+                Quick Actions
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <a href="{% url 'placement:manage_students' %}" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-people me-2"></i>Manage Students
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="{% url 'placement:manage_companies' %}" class="btn btn-outline-success w-100">
+                        <i class="bi bi-building me-2"></i>Manage Companies
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="{% url 'placement:statistics' %}" class="btn btn-outline-info w-100">
+                        <i class="bi bi-graph-up me-2"></i>View Statistics
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="{% url 'placement:manage_drives' %}" class="btn btn-outline-warning w-100">
+                        <i class="bi bi-calendar-event me-2"></i>Placement Drives
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

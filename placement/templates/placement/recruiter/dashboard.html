@@ -1,0 +1,214 @@
+{% extends 'placement/base.html' %}
+
+{% block title %}Recruiter Dashboard{% endblock %}
+
+{% block content %}
+<div class="profile-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2 class="mb-2">
+                    <i class="bi bi-building me-2"></i>
+                    Recruiter Dashboard
+                </h2>
+                <p class="mb-0 opacity-75">Welcome, {{ user.get_full_name|default:user.username }}!</p>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <a href="{% url 'placement:create_job' %}" class="btn btn-light">
+                    <i class="bi bi-plus-circle me-2"></i>Post New Job
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card stat-card text-center h-100">
+                <div class="card-body">
+                    <i class="bi bi-building stat-icon text-primary"></i>
+                    <h3 class="mt-3 mb-1">{{ companies.count }}</h3>
+                    <p class="text-muted mb-0">My Companies</p>
+                    <a href="{% url 'placement:create_company' %}" class="btn btn-sm btn-outline-primary mt-2">
+                        Add More <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card stat-card text-center h-100">
+                <div class="card-body">
+                    <i class="bi bi-briefcase-fill stat-icon text-success"></i>
+                    <h3 class="mt-3 mb-1">{{ total_jobs }}</h3>
+                    <p class="text-muted mb-0">Total Jobs Posted</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card stat-card text-center h-100">
+                <div class="card-body">
+                    <i class="bi bi-activity stat-icon text-warning"></i>
+                    <h3 class="mt-3 mb-1">{{ active_jobs }}</h3>
+                    <p class="text-muted mb-0">Active Jobs</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card stat-card text-center h-100">
+                <div class="card-body">
+                    <i class="bi bi-file-earmark-text-fill stat-icon text-info"></i>
+                    <h3 class="mt-3 mb-1">{{ total_applications }}</h3>
+                    <p class="text-muted mb-0">Total Applications</p>
+                    <small class="text-muted">{{ pending_applications }} pending</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- My Companies -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-building me-2"></i>
+                        My Companies
+                    </h5>
+                    <a href="{% url 'placement:create_company' %}" class="btn btn-sm btn-primary">
+                        <i class="bi bi-plus-circle me-1"></i>Add Company
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if companies %}
+                        {% for company in companies %}
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">{{ company.name }}</h6>
+                                        <p class="text-muted mb-2 small">
+                                            <i class="bi bi-briefcase me-1"></i>{{ company.industry }} | 
+                                            <i class="bi bi-geo-alt me-1"></i>{{ company.location }}
+                                        </p>
+                                        <div class="d-flex gap-2 align-items-center">
+                                            {% if company.is_approved %}
+                                                <span class="badge bg-success">
+                                                    <i class="bi bi-check-circle me-1"></i>Approved
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-warning">
+                                                    <i class="bi bi-clock me-1"></i>Pending Approval
+                                                </span>
+                                            {% endif %}
+                                            <small class="text-muted">
+                                                {{ company.total_jobs_posted }} jobs posted
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <a href="{% url 'placement:edit_company' company.id %}" 
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil"></i> Edit
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="bi bi-building" style="font-size: 3rem; opacity: 0.3;"></i>
+                            <p class="text-muted mt-2 mb-3">No companies registered yet</p>
+                            <a href="{% url 'placement:create_company' %}" class="btn btn-primary">
+                                <i class="bi bi-plus-circle me-2"></i>Register Your First Company
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Applications -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-clock-history me-2"></i>
+                        Recent Applications
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_applications %}
+                        <div class="list-group list-group-flush">
+                            {% for app in recent_applications %}
+                            <div class="list-group-item px-0">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1 small">{{ app.student.user.get_full_name }}</h6>
+                                        <p class="text-muted mb-1 small">
+                                            Applied for: {{ app.job.title }}
+                                        </p>
+                                        <small class="text-muted">
+                                            <i class="bi bi-calendar me-1"></i>{{ app.applied_at|date:"d M, Y" }}
+                                        </small>
+                                    </div>
+                                    <div class="text-end">
+                                        {% if app.status == 'accepted' %}
+                                            <span class="badge bg-success">Accepted</span>
+                                        {% elif app.status == 'shortlisted' %}
+                                            <span class="badge bg-info">Shortlisted</span>
+                                        {% elif app.status == 'pending' %}
+                                            <span class="badge bg-warning">Pending</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Rejected</span>
+                                        {% endif %}
+                                        <div class="mt-1">
+                                            <a href="{% url 'placement:view_applications' app.job.id %}" 
+                                               class="btn btn-sm btn-outline-primary">
+                                                View
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="bi bi-inbox" style="font-size: 2.5rem; opacity: 0.3;"></i>
+                            <p class="text-muted mt-2 mb-0">No applications yet</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="bi bi-lightning-fill me-2"></i>
+                Quick Actions
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <a href="{% url 'placement:create_company' %}" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-building me-2"></i>Register Company
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="{% url 'placement:create_job' %}" class="btn btn-outline-success w-100">
+                        <i class="bi bi-plus-circle me-2"></i>Post Job
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

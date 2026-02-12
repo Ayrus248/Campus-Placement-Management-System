@@ -1,0 +1,136 @@
+{% extends 'placement/base.html' %}
+
+{% block title %}{{ job.title }} - {{ job.company.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">{{ job.title }}</h4>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="flex-grow-1">
+                            <h5 class="mb-1">
+                                <i class="bi bi-building me-2 text-primary"></i>
+                                {{ job.company.name }}
+                            </h5>
+                            <p class="text-muted mb-0">
+                                <i class="bi bi-geo-alt me-1"></i>{{ job.location }}
+                            </p>
+                        </div>
+                        {% if is_eligible %}
+                            <span class="badge bg-success fs-6">
+                                <i class="bi bi-check-circle me-1"></i>You're Eligible
+                            </span>
+                        {% else %}
+                            <span class="badge bg-danger fs-6">
+                                <i class="bi bi-x-circle me-1"></i>Not Eligible
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <h5 class="border-bottom pb-2 mb-3">Job Description</h5>
+                    <p>{{ job.description|linebreaks }}</p>
+
+                    <h5 class="border-bottom pb-2 mb-3 mt-4">Required Skills</h5>
+                    <p>{{ job.required_skills|linebreaks }}</p>
+
+                    {% if job.selection_process %}
+                    <h5 class="border-bottom pb-2 mb-3 mt-4">Selection Process</h5>
+                    <p>{{ job.selection_process|linebreaks }}</p>
+                    {% endif %}
+
+                    {% if job.bond_details %}
+                    <h5 class="border-bottom pb-2 mb-3 mt-4">Bond Details</h5>
+                    <p>{{ job.bond_details|linebreaks }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Job Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Package Range</small>
+                        <h5 class="mb-0 text-success">{{ job.get_package_range }}</h5>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Job Type</small>
+                        <strong>{{ job.get_job_type_display }}</strong>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Vacancies</small>
+                        <strong>{{ job.vacancies }} positions</strong>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Application Deadline</small>
+                        <strong class="text-danger">{{ job.deadline|date:"d M, Y h:i A" }}</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Eligibility Criteria</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Minimum CGPA</small>
+                        <strong>{{ job.minimum_cgpa }}</strong>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Maximum Backlogs</small>
+                        <strong>{{ job.maximum_backlogs }}</strong>
+                    </div>
+                    <div class="mb-0">
+                        <small class="text-muted d-block">Allowed Branches</small>
+                        {% if job.allowed_branches.all %}
+                            <div class="d-flex flex-wrap gap-1 mt-1">
+                                {% for branch in job.allowed_branches.all %}
+                                    <span class="badge bg-secondary">{{ branch.code }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <strong>All Branches</strong>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            {% if is_eligible %}
+                {% if not has_applied %}
+                <div class="d-grid">
+                    <a href="{% url 'placement:apply_job' job.id %}" class="btn btn-success btn-lg">
+                        <i class="bi bi-send-fill me-2"></i>Apply Now
+                    </a>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    You have already applied for this job.
+                    <a href="{% url 'placement:my_applications' %}" class="alert-link">View your applications</a>
+                </div>
+                {% endif %}
+            {% else %}
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <strong>Not Eligible:</strong> {{ eligibility_message }}
+                </div>
+            {% endif %}
+
+            <div class="d-grid mt-3">
+                <a href="{% url 'placement:student_jobs' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Jobs
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

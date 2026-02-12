@@ -1,0 +1,219 @@
+{% extends 'placement/base.html' %}
+
+{% block title %}Post New Job{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-lg mt-4 mb-5">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="bi bi-plus-circle me-2"></i>
+                        Post a New Job
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <!-- Job Details -->
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="bi bi-briefcase me-2 text-primary"></i>
+                            Job Details
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_company" class="form-label">Company *</label>
+                                {{ form.company }}
+                                {% if form.company.errors %}
+                                    <div class="text-danger small">{{ form.company.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="id_job_type" class="form-label">Job Type *</label>
+                                {{ form.job_type }}
+                                {% if form.job_type.errors %}
+                                    <div class="text-danger small">{{ form.job_type.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-12 mb-3">
+                                <label for="id_title" class="form-label">Job Title *</label>
+                                {{ form.title }}
+                                {% if form.title.errors %}
+                                    <div class="text-danger small">{{ form.title.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-12 mb-3">
+                                <label for="id_description" class="form-label">Job Description *</label>
+                                {{ form.description }}
+                                <small class="form-text text-muted">Detailed description of the role and responsibilities</small>
+                                {% if form.description.errors %}
+                                    <div class="text-danger small">{{ form.description.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-12 mb-3">
+                                <label for="id_required_skills" class="form-label">Required Skills *</label>
+                                {{ form.required_skills }}
+                                <small class="form-text text-muted">List the key skills required for this position</small>
+                                {% if form.required_skills.errors %}
+                                    <div class="text-danger small">{{ form.required_skills.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="id_location" class="form-label">Job Location *</label>
+                                {{ form.location }}
+                                {% if form.location.errors %}
+                                    <div class="text-danger small">{{ form.location.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="id_vacancies" class="form-label">Number of Vacancies *</label>
+                                {{ form.vacancies }}
+                                {% if form.vacancies.errors %}
+                                    <div class="text-danger small">{{ form.vacancies.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Compensation -->
+                        <h5 class="border-bottom pb-2 mb-3 mt-4">
+                            <i class="bi bi-currency-rupee me-2 text-success"></i>
+                            Compensation
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_package_min" class="form-label">Minimum Package (LPA) *</label>
+                                {{ form.package_min }}
+                                {% if form.package_min.errors %}
+                                    <div class="text-danger small">{{ form.package_min.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="id_package_max" class="form-label">Maximum Package (LPA) *</label>
+                                {{ form.package_max }}
+                                {% if form.package_max.errors %}
+                                    <div class="text-danger small">{{ form.package_max.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Eligibility Criteria -->
+                        <h5 class="border-bottom pb-2 mb-3 mt-4">
+                            <i class="bi bi-shield-check me-2 text-warning"></i>
+                            Eligibility Criteria
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_minimum_cgpa" class="form-label">Minimum CGPA Required *</label>
+                                {{ form.minimum_cgpa }}
+                                <small class="form-text text-muted">Scale: 0.0 to 10.0</small>
+                                {% if form.minimum_cgpa.errors %}
+                                    <div class="text-danger small">{{ form.minimum_cgpa.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="id_maximum_backlogs" class="form-label">Maximum Backlogs Allowed *</label>
+                                {{ form.maximum_backlogs }}
+                                {% if form.maximum_backlogs.errors %}
+                                    <div class="text-danger small">{{ form.maximum_backlogs.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="id_allowed_branches" class="form-label">Allowed Branches</label>
+                                {{ form.allowed_branches }}
+                                <small class="form-text text-muted d-block">Leave empty to allow all branches</small>
+                                {% if form.allowed_branches.errors %}
+                                    <div class="text-danger small">{{ form.allowed_branches.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="id_allowed_years" class="form-label">Allowed Years *</label>
+                                {{ form.allowed_years }}
+                                <small class="form-text text-muted">Comma-separated (e.g., 3,4 for third and fourth year)</small>
+                                {% if form.allowed_years.errors %}
+                                    <div class="text-danger small">{{ form.allowed_years.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Application Details -->
+                        <h5 class="border-bottom pb-2 mb-3 mt-4">
+                            <i class="bi bi-calendar-event me-2 text-info"></i>
+                            Application Details
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_deadline" class="form-label">Application Deadline *</label>
+                                {{ form.deadline }}
+                                {% if form.deadline.errors %}
+                                    <div class="text-danger small">{{ form.deadline.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="id_is_active" class="form-label">Job Status</label>
+                                <div class="form-check form-switch">
+                                    {{ form.is_active }}
+                                    <label class="form-check-label" for="id_is_active">
+                                        Active (accepting applications)
+                                    </label>
+                                </div>
+                                {% if form.is_active.errors %}
+                                    <div class="text-danger small">{{ form.is_active.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Additional Information -->
+                        <h5 class="border-bottom pb-2 mb-3 mt-4">
+                            <i class="bi bi-info-circle me-2 text-secondary"></i>
+                            Additional Information
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="id_selection_process" class="form-label">Selection Process</label>
+                                {{ form.selection_process }}
+                                <small class="form-text text-muted">Describe the recruitment rounds (Written test, Technical interview, HR interview, etc.)</small>
+                                {% if form.selection_process.errors %}
+                                    <div class="text-danger small">{{ form.selection_process.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-12 mb-3">
+                                <label for="id_bond_details" class="form-label">Bond/Service Agreement Details</label>
+                                {{ form.bond_details }}
+                                <small class="form-text text-muted">If any bond or service agreement applies</small>
+                                {% if form.bond_details.errors %}
+                                    <div class="text-danger small">{{ form.bond_details.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-circle me-2"></i>
+                                Post Job
+                            </button>
+                            <a href="{% url 'placement:recruiter_dashboard' %}" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-x-circle me-2"></i>
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

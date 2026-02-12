@@ -1,0 +1,220 @@
+{% extends 'placement/base.html' %}
+
+{% block title %}My Profile - {{ profile.user.get_full_name }}{% endblock %}
+
+{% block content %}
+<div class="profile-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2 class="mb-2">
+                    <i class="bi bi-person-circle me-2"></i>
+                    {{ profile.user.get_full_name }}
+                </h2>
+                <p class="mb-0 opacity-75">
+                    {{ profile.enrollment_number }} | {{ profile.user.email }}
+                </p>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <a href="{% url 'placement:edit_student_profile' %}" class="btn btn-light me-2">
+                    <i class="bi bi-pencil-square me-2"></i>Edit Profile
+                </a>
+                {% if profile.resume %}
+                <a href="{% url 'placement:download_resume' %}" class="btn btn-outline-light">
+                    <i class="bi bi-download me-2"></i>Download Resume
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <!-- Personal Information -->
+        <div class="col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-person-badge me-2"></i>
+                        Personal Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Enrollment Number</small>
+                        <strong>{{ profile.enrollment_number }}</strong>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Date of Birth</small>
+                        <strong>{{ profile.date_of_birth|date:"d M, Y"|default:"Not specified" }}</strong>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Gender</small>
+                        <strong>{{ profile.get_gender_display }}</strong>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Email</small>
+                        <strong>{{ profile.user.email }}</strong>
+                    </div>
+                    <div class="mb-0">
+                        <small class="text-muted d-block">Phone</small>
+                        <strong>{{ profile.user.phone|default:"Not specified" }}</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resume Status -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-file-earmark-pdf me-2"></i>
+                        Resume
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    {% if profile.resume %}
+                        <i class="bi bi-file-earmark-pdf-fill text-success" style="font-size: 3rem;"></i>
+                        <p class="mt-2 mb-2"><strong>Resume Uploaded</strong></p>
+                        <small class="text-muted d-block mb-3">
+                            Uploaded on {{ profile.resume_uploaded_at|date:"d M, Y" }}
+                        </small>
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'placement:download_resume' %}" class="btn btn-success">
+                                <i class="bi bi-download me-2"></i>Download
+                            </a>
+                            <a href="{% url 'placement:upload_resume' %}" class="btn btn-outline-primary">
+                                <i class="bi bi-upload me-2"></i>Update Resume
+                            </a>
+                        </div>
+                    {% else %}
+                        <i class="bi bi-file-earmark-x text-danger" style="font-size: 3rem;"></i>
+                        <p class="mt-2 mb-3"><strong>No Resume Uploaded</strong></p>
+                        <a href="{% url 'placement:upload_resume' %}" class="btn btn-primary">
+                            <i class="bi bi-upload me-2"></i>Upload Resume
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Academic & Professional Information -->
+        <div class="col-lg-8 mb-4">
+            <!-- Academic Details -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-book me-2"></i>
+                        Academic Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <small class="text-muted d-block">Branch</small>
+                            <strong>{{ profile.get_branch_display }}</strong>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <small class="text-muted d-block">Year</small>
+                            <strong>{{ profile.get_year_display }}</strong>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <small class="text-muted d-block">CGPA</small>
+                            <h4 class="mb-0 text-primary">{{ profile.cgpa }}</h4>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <small class="text-muted d-block">Active Backlogs</small>
+                            <h4 class="mb-0 {% if profile.backlogs == 0 %}text-success{% else %}text-danger{% endif %}">
+                                {{ profile.backlogs }}
+                            </h4>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <small class="text-muted d-block">10th %</small>
+                            <strong>{{ profile.tenth_percentage }}%</strong>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <small class="text-muted d-block">12th %</small>
+                            <strong>{{ profile.twelfth_percentage }}%</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Skills -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-lightbulb me-2"></i>
+                        Skills
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if profile.skills %}
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for skill in profile.skills.split ',' %}
+                                <span class="badge bg-primary">{{ skill.strip }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">No skills added yet</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Certifications -->
+            {% if profile.certifications %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-award me-2"></i>
+                        Certifications
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">{{ profile.certifications|linebreaks }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Projects -->
+            {% if profile.projects %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-code-slash me-2"></i>
+                        Projects
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">{{ profile.projects|linebreaks }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Placement Status -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-trophy me-2"></i>
+                        Placement Status
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if profile.is_placed %}
+                        <div class="alert alert-success mb-0">
+                            <h5><i class="bi bi-check-circle-fill me-2"></i>Placed!</h5>
+                            <p class="mb-1"><strong>Company:</strong> {{ profile.placement_company }}</p>
+                            <p class="mb-0"><strong>Package:</strong> ₹{{ profile.placement_package }} LPA</p>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info mb-0">
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                            Not placed yet. Keep applying!
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

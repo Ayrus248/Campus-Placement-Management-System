@@ -1,0 +1,87 @@
+{% extends 'placement/base.html' %}
+
+{% block title %}Upload Resume{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-lg mt-4 mb-5">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="bi bi-upload me-2"></i>
+                        {% if profile.resume %}Update{% else %}Upload{% endif %} Resume
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    {% if profile.resume %}
+                    <div class="alert alert-info">
+                        <h6><i class="bi bi-info-circle me-2"></i>Current Resume</h6>
+                        <p class="mb-2">Uploaded on: {{ profile.resume_uploaded_at|date:"d M, Y h:i A" }}</p>
+                        <a href="{% url 'placement:download_resume' %}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-download me-1"></i>Download Current Resume
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label for="id_resume" class="form-label">
+                                Select Resume File (PDF only) *
+                            </label>
+                            {{ form.resume }}
+                            {% if form.resume.errors %}
+                                <div class="text-danger small mt-1">{{ form.resume.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="alert alert-warning">
+                            <h6><i class="bi bi-exclamation-triangle me-2"></i>Important Guidelines</h6>
+                            <ul class="mb-0 small">
+                                <li>Only PDF format is accepted</li>
+                                <li>Maximum file size: 5 MB</li>
+                                <li>File name should be professional (e.g., YourName_Resume.pdf)</li>
+                                <li>Ensure your resume is updated with latest information</li>
+                                <li>Include your contact details, education, skills, and experience</li>
+                            </ul>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-upload me-2"></i>
+                                {% if profile.resume %}Update Resume{% else %}Upload Resume{% endif %}
+                            </button>
+                            <a href="{% url 'placement:student_profile' %}" 
+                               class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tips Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-lightbulb me-2"></i>
+                        Resume Tips
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0">
+                        <li>Keep it concise (1-2 pages)</li>
+                        <li>Use clear section headings</li>
+                        <li>Highlight key achievements with metrics</li>
+                        <li>Tailor skills to match job requirements</li>
+                        <li>Proofread for grammar and spelling</li>
+                        <li>Use professional email address</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

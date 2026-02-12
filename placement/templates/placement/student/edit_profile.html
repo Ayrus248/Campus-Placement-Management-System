@@ -1,0 +1,167 @@
+{% extends 'placement/base.html' %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-lg mt-4 mb-5">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="bi bi-pencil-square me-2"></i>
+                        Edit Your Profile
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Personal Information -->
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="bi bi-person me-2 text-primary"></i>
+                            Personal Information
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_enrollment_number" class="form-label">Enrollment Number *</label>
+                                {{ form.enrollment_number }}
+                                {% if form.enrollment_number.errors %}
+                                    <div class="text-danger small">{{ form.enrollment_number.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="id_date_of_birth" class="form-label">Date of Birth</label>
+                                {{ form.date_of_birth }}
+                                {% if form.date_of_birth.errors %}
+                                    <div class="text-danger small">{{ form.date_of_birth.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="id_gender" class="form-label">Gender *</label>
+                                {{ form.gender }}
+                                {% if form.gender.errors %}
+                                    <div class="text-danger small">{{ form.gender.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Academic Information -->
+                        <h5 class="border-bottom pb-2 mb-3 mt-4">
+                            <i class="bi bi-book me-2 text-success"></i>
+                            Academic Information
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_branch" class="form-label">Branch *</label>
+                                {{ form.branch }}
+                                {% if form.branch.errors %}
+                                    <div class="text-danger small">{{ form.branch.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="id_year" class="form-label">Year *</label>
+                                {{ form.year }}
+                                {% if form.year.errors %}
+                                    <div class="text-danger small">{{ form.year.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="id_cgpa" class="form-label">CGPA (0-10) *</label>
+                                {{ form.cgpa }}
+                                {% if form.cgpa.errors %}
+                                    <div class="text-danger small">{{ form.cgpa.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="id_backlogs" class="form-label">Active Backlogs *</label>
+                                {{ form.backlogs }}
+                                {% if form.backlogs.errors %}
+                                    <div class="text-danger small">{{ form.backlogs.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="id_tenth_percentage" class="form-label">10th Percentage *</label>
+                                {{ form.tenth_percentage }}
+                                {% if form.tenth_percentage.errors %}
+                                    <div class="text-danger small">{{ form.tenth_percentage.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="id_twelfth_percentage" class="form-label">12th Percentage *</label>
+                                {{ form.twelfth_percentage }}
+                                {% if form.twelfth_percentage.errors %}
+                                    <div class="text-danger small">{{ form.twelfth_percentage.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Skills & Experience -->
+                        <h5 class="border-bottom pb-2 mb-3 mt-4">
+                            <i class="bi bi-lightbulb me-2 text-warning"></i>
+                            Skills & Experience
+                        </h5>
+                        <div class="mb-3">
+                            <label for="id_skills" class="form-label">Skills *</label>
+                            {{ form.skills }}
+                            <small class="form-text text-muted">
+                                Enter comma-separated skills (e.g., Python, Java, SQL, Machine Learning)
+                            </small>
+                            {% if form.skills.errors %}
+                                <div class="text-danger small">{{ form.skills.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_certifications" class="form-label">Certifications</label>
+                            {{ form.certifications }}
+                            <small class="form-text text-muted">
+                                List your certifications and courses
+                            </small>
+                            {% if form.certifications.errors %}
+                                <div class="text-danger small">{{ form.certifications.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_projects" class="form-label">Projects</label>
+                            {{ form.projects }}
+                            <small class="form-text text-muted">
+                                Brief description of your projects
+                            </small>
+                            {% if form.projects.errors %}
+                                <div class="text-danger small">{{ form.projects.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Resume -->
+                        <h5 class="border-bottom pb-2 mb-3 mt-4">
+                            <i class="bi bi-file-earmark-pdf me-2 text-danger"></i>
+                            Resume
+                        </h5>
+                        <div class="mb-3">
+                            <label for="id_resume" class="form-label">Upload Resume (PDF only)</label>
+                            {{ form.resume }}
+                            <small class="form-text text-muted d-block">
+                                Only PDF files are accepted. Maximum size: 5MB
+                            </small>
+                            {% if form.resume.errors %}
+                                <div class="text-danger small">{{ form.resume.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex gap-3 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-circle me-2"></i>
+                                Save Profile
+                            </button>
+                            <a href="{% url 'placement:student_profile' %}" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-x-circle me-2"></i>
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
