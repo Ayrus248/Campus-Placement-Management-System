@@ -1,4 +1,5 @@
 {% extends 'placement/base.html' %}
+{% load placement_tags %}
 
 {% block title %}My Profile - {{ profile.user.get_full_name }}{% endblock %}
 
@@ -151,8 +152,8 @@
                 <div class="card-body">
                     {% if profile.skills %}
                         <div class="d-flex flex-wrap gap-2">
-                            {% for skill in profile.skills.split ',' %}
-                                <span class="badge bg-primary">{{ skill.strip }}</span>
+                            {% for skill in profile.skills|split:"," %}
+                                <span class="badge bg-primary">{{ skill }}</span>
                             {% endfor %}
                         </div>
                     {% else %}
@@ -201,11 +202,40 @@
                 </div>
                 <div class="card-body">
                     {% if profile.is_placed %}
-                        <div class="alert alert-success mb-0">
+                        <div class="alert alert-success mb-3">
                             <h5><i class="bi bi-check-circle-fill me-2"></i>Placed!</h5>
-                            <p class="mb-1"><strong>Company:</strong> {{ profile.placement_company }}</p>
+                            <p class="mb-1"><strong>Primary Offer:</strong> {{ profile.placement_company }}</p>
                             <p class="mb-0"><strong>Package:</strong> ₹{{ profile.placement_package }} LPA</p>
                         </div>
+                        
+                        <!-- Show all accepted offers -->
+                        {% with accepted_apps=user.student_profile.applications.all %}
+                            {% if accepted_apps.count > 0 %}
+                                <h6 class="mb-2"><i class="bi bi-star-fill me-2 text-warning"></i>All Your Offers:</h6>
+                                <div class="list-group">
+                                    {% for app in accepted_apps %}
+                                        {% if app.status == 'accepted' %}
+                                            <div class="list-group-item">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <strong>{{ app.job.company.name }}</strong>
+                                                        <p class="mb-1 small text-muted">{{ app.job.title }}</p>
+                                                        <small>Package: ₹{{ app.job.package_min }}-{{ app.job.package_max }} LPA</small>
+                                                    </div>
+                                                    {% if app.job.company.name == profile.placement_company %}
+                                                        <span class="badge bg-success">Best Offer</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <small class="text-muted d-block mt-2">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Your profile displays the highest package offer
+                                </small>
+                            {% endif %}
+                        {% endwith %}
                     {% else %}
                         <div class="alert alert-info mb-0">
                             <i class="bi bi-info-circle-fill me-2"></i>

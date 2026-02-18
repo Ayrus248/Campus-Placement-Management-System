@@ -548,10 +548,79 @@ def update_application_status(request, application_id):
         recruiter_notes = request.POST.get('recruiter_notes', '')
         
         if new_status in dict(JobApplication.STATUS_CHOICES):
+            old_status = application.status
             application.status = new_status
             application.recruiter_notes = recruiter_notes
             application.save()
-            messages.success(request, f"Application status updated to {application.get_status_display()}.")
+            
+            # Update student placement status if accepted
+            if new_status == 'accepted' and old_status != 'accepted':
+                student_profile = application.student
+                
+                # Get all accepted applications for this student
+                accepted_apps = JobApplication.objects.filter(
+                    student=student_profile,
+                    status='accepted'
+                ).select_related('job__company').order_by('-job__package_max')
+                
+                if accepted_apps.exists():
+                    # Mark as placed
+                    student_profile.is_placed = True
+                    
+                    # Use the highest package offer
+                    best_offer = accepted_apps.first()
+                    student_profile.placement_company = best_offer.job.company.name
+                    student_profile.placement_package = best_offer.job.package_max
+                    
+                    student_profile.save()
+                    
+                    # Show count of total offers
+                    offer_count = accepted_apps.count()
+                    if offer_count > 1:
+                        companies = ', '.join([app.job.company.name for app in accepted_apps])
+                        messages.success(
+                            request, 
+                            f"Application accepted! {student_profile.user.get_full_name()} now has {offer_count} offers: {companies}. "
+                            f"Displaying highest package: {best_offer.job.company.name} (₹{best_offer.job.package_max} LPA)."
+                        )
+                    else:
+                        messages.success(
+                            request, 
+                            f"Application accepted! {student_profile.user.get_full_name()} is now marked as placed at {application.job.company.name}."
+                        )
+                        
+            # Revert placement status if status changed from accepted to something else
+            elif old_status == 'accepted' and new_status != 'accepted':
+                student_profile = application.student
+                
+                # Check remaining accepted applications
+                remaining_accepted = JobApplication.objects.filter(
+                    student=student_profile,
+                    status='accepted'
+                ).exclude(id=application.id).select_related('job__company').order_by('-job__package_max')
+                
+                if remaining_accepted.exists():
+                    # Still has other offers, update to show best remaining offer
+                    best_offer = remaining_accepted.first()
+                    student_profile.placement_company = best_offer.job.company.name
+                    student_profile.placement_package = best_offer.job.package_max
+                    student_profile.save()
+                    
+                    offer_count = remaining_accepted.count()
+                    messages.info(
+                        request, 
+                        f"Application status changed. Student still has {offer_count} offer(s). "
+                        f"Now showing: {best_offer.job.company.name} (₹{best_offer.job.package_max} LPA)."
+                    )
+                else:
+                    # No more accepted applications, unmark as placed
+                    student_profile.is_placed = False
+                    student_profile.placement_company = None
+                    student_profile.placement_package = None
+                    student_profile.save()
+                    messages.info(request, f"Placement status reverted for {student_profile.user.get_full_name()}.")
+            else:
+                messages.success(request, f"Application status updated to {application.get_status_display()}.")
         else:
             messages.error(request, "Invalid status.")
     

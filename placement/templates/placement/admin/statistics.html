@@ -27,10 +27,15 @@
                     </h1>
                     <p class="text-muted">Students Placed</p>
                     {% if total_students > 0 %}
+                        {% widthratio placed_students total_students 100 as placement_percent %}
                         <div class="progress" style="height: 30px;">
-                            <div class="progress-bar bg-success" style="width: {{ placed_students|floatformat:0|add:'0' }}{{ total_students|floatformat:0|divisibleby:placed_students|floatformat:0 }}%">
-                                {% widthratio placed_students total_students 100 %}%
+                            <div class="progress-bar bg-success" style="width: {{ placement_percent }}%">
+                                {{ placement_percent }}%
                             </div>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info mb-0">
+                            No students registered yet
                         </div>
                     {% endif %}
                 </div>
